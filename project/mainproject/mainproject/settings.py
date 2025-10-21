@@ -128,3 +128,7 @@ STATICFILES_FINDERS = [
 ]
 
 LOGIN_URL = '/admin/login/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]

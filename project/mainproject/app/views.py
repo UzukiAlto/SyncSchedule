@@ -7,22 +7,15 @@ from django.contrib.auth.decorators import login_required
 def get_class_context():
     context = {}
     classes = Class.objects.all()
-    class_list = []
+    # 授業を入れる配列[曜日][時限]
+    class_list = [[None for _ in range(8)] for _ in range(6)]
     exist_saturday_class = False
-    class_count = 6 * 8  # 6日間、各8時限
     subject = classes[0]
     
-    for i in range(class_count):
-        if(subject.day_of_the_week == i % 6 and subject.period == (i % 8) + 1):
-            class_list.append(subject)
-            if subject.day_of_the_week == 5:  # 土曜日のクラスが存在するか確認
-                exist_saturday_class = True
-            try:
-                subject = classes[classes.index(subject) + 1]
-            except IndexError:
-                subject = None
-        else:
-            class_list.append(None)
+    for subject in classes:
+        class_list[subject.day_of_the_week][subject.period - 1] = subject
+        if subject.day_of_the_week == 5:  # 土曜日のクラスが存在するか確認
+            exist_saturday_class = True
             
     context["class_list"] = class_list
     context["exist_saturday_class"] = exist_saturday_class
@@ -42,6 +35,10 @@ def home_edit(request):
             class_form = form.save(commit=False)
             class_form.author = request.user
             class_form.save()
+            context.clear()
+            
+            context = get_class_context()
+            context["form"] = ClassForm()
             return render(request, "app/home-edit.html", context=context)
         return render(request, "app/home-edit.html", {"form": ClassForm()}, context=context)
     elif request.method == "GET":
