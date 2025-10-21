@@ -21,3 +21,11 @@
     width: 14.285714285714285714285714285714%;
   }
 }
+
+.grid-container {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(8, 1fr);
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }

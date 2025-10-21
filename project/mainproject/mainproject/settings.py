@@ -129,5 +129,9 @@ STATICFILES_FINDERS = [
 ]
 
 LOGIN_URL = '/admin/login/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 LOGIN_REDIRECT_URL = '/'    #リダイレクト先＃
 LOGOUT_REDIRECT_URL = '/'
