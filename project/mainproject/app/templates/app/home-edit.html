@@ -19,65 +19,6 @@
         <button class="btn btn-dark" type="submit">決定</button>
     </form>
     
-<div class="container my-4">
-  <div class="row custom-row-cols-6 g-3">
-    <div class="col">
-      <div class="card">
-        <div class="card-body">月曜日</div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card">
-        <div class="card-body">火曜日</div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card">
-        <div class="card-body">水曜日</div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card">
-        <div class="card-body">木曜日</div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card">
-        <div class="card-body">金曜日</div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card">
-        <div class="card-body">土曜日</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid-container">
-    {% for classes in class_list %}
-    {% for class in classes %}
-      {% if class != None%}
-        <div class="col">
-          <div class="card">
-            <div class="card-body">
-              <p>{{ class.class_name }}</p>
-              <p>{{ class.classroom_name }}</p>
-            </div>
-          </div>
-        </div>
-      {% else %}
-        <div class="col">
-          <div class="card">
-            <div class="card-body" style="text-align: center;">
-              <button type="button" class="btn btn-outline-secondary">+</button>
-            </div>
-          </div>
-        </div>
-      {% endif %}
-    {% endfor %}
-    {% endfor %}
-  </div>
-
   </div>
 </body>
 </html>
