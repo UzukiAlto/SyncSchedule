@@ -5,4 +5,5 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("edit/", views.home_edit, name="home_edit"),
+    path("delete/<int:class_id>/", views.delete_class, name="delete_class"),
 ]
