@@ -12,47 +12,62 @@ from django.shortcuts import render
 
 def get_class_context(user):
     context = {}
+    
     classes = Class.objects.filter(author=user)
+    grid_period_range = range(8)  # 1~8限目
+    grid_row_range = range(8)  # 曜日+1~8限目
+    grid_column_range = range(6)  # 月~土曜日
     
     day_of_the_week_list = ["月", "火", "水", "木", "金", "土"]
     # 授業を入れる配列[曜日][時限]
-    class_list = [[None for _ in range(8)] for _ in range(6)]
+    class_list = [[{"exist_class_par_week":True, "content":None} for _ in range(8)] for _ in range(6)]
     # 時限ごとに授業があるかどうかの配列
     exist_class_per_period_list = [False for _ in range(8)]
+    for i in range(4):
+        exist_class_per_period_list[i] = True  # 1~4限目は必ず授業があるものとする
+        
     exist_saturday_class = False
     max_period = 8
     
     for subject in classes:
-        class_list[subject.day_of_the_week][subject.period - 1] = subject
+        class_list[subject.day_of_the_week][subject.period - 1]["content"] = subject
         if subject.day_of_the_week == 5:  # 土曜日のクラスが存在するか確認
             exist_saturday_class = True
             
         exist_class_per_period_list[subject.period - 1] = True
             
-    if not exist_saturday_class:
-        # 土曜日に授業がない場合、配列から削除
-        class_list.pop()
+    # if not exist_saturday_class:
+    #     # 土曜日に授業がない場合、配列から削除
+    #     class_list.pop()
         
-    # 4~8限目で授業がない場合、配列から削除
+    # 4~8限目で授業がない場合、縦の最大値を変更
     for period in range(8, 4, -1):
         if exist_class_per_period_list[period - 1] == False:
             max_period = period - 1
-            for subjects in class_list:
-                subjects.pop()
+            
+            for week in range(6):
+                class_list[week][period - 1]["exist_class_par_week"] = False
         else:
             break
-            
-            
     
+    # # 授業がある時限にフラグを立てる
+    # for subject in classes:
+    #     if exist_class_per_period_list[subject.period - 1]:
+    #         class_list[subject.day_of_the_week][subject.period - 1]["exist_class_par_week"] = True
+            
+    context["grid_period_range"] = grid_period_range
+    # context["grid_row_range"] = grid_row_range
+    # context["grid_column_range"] = grid_column_range
     context["class_list"] = class_list
     context["day_of_the_week_list"] = day_of_the_week_list
     context["exist_class_per_period_list"] = exist_class_per_period_list
     context["timetable_row"] = max_period
+    context["exist_saturday_class"] = exist_saturday_class
     if exist_saturday_class:
         context["timetable_column"] = 7
     else:
         context["timetable_column"] = 6
-    context["period_range"] = range(1, max_period + 1)
+    # context["period_range"] = range(1, max_period + 1)
     return context
 
 @login_required
@@ -76,12 +91,7 @@ def home_edit(request, id_day_of_week, id_period):
             class_form = form.save(commit=False)
             class_form.author = request.user
             class_form.save()
-            # context.clear()
-            
-            # context = get_class_context()
-            # context["form"] = ClassForm()
-            # context["is_editing"] = True
-            return redirect(reverse('app:index') + '?edit_mode=on')
+            return redirect(reverse('index') + '?edit_mode=on')
         
         return render(request, "app/home-edit.html", {"form": ClassForm()}, context=context)
     
