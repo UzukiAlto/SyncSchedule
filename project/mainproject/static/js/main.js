@@ -58,5 +58,3 @@ const displayHomeEdit = () => {
 
 // 編集ボタンにクリックイベントを追加
 homeEditButton.addEventListener("click", displayHomeEdit);
-
-
