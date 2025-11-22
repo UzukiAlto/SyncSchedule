@@ -38,3 +38,7 @@
   pointer-events: none; 
   cursor: default;  
 }
+
+.delete-btn {
+  pointer-events: auto;
+}
