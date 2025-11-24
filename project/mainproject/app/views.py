@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Class
 # from django.http import HttpResponse
 from .forms import ClassForm
+from .forms import ClassScheduleForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
@@ -29,12 +30,13 @@ def get_class_context(user):
     max_period = 8
     
     for subject in classes:
-        # htmlに渡す配列に授業を格納
-        class_list[subject.day_of_the_week][subject.period - 1]["content"] = subject
-        if subject.day_of_the_week == 5:  # 土曜日のクラスが存在するか確認
-            exist_saturday_class = True
-            
-        exist_class_per_period_list[subject.period - 1] = True
+        for schedule in subject.class_schedule_set.all():
+            # htmlに渡す配列に授業を格納
+            class_list[schedule.day_of_the_week][schedule.period - 1]["content"] = subject
+            if schedule.day_of_the_week == 5:  # 土曜日のクラスが存在するか確認
+                exist_saturday_class = True
+                
+            exist_class_per_period_list[schedule.period - 1] = True
             
     # 土曜日に授業がない場合、存在フラグをFalseに
     if not exist_saturday_class:
@@ -79,35 +81,83 @@ def home_edit(request, username, id_day_of_week, id_period):
     context = get_class_context(request.user)
     
     if request.method == "POST":
-        form = ClassForm(request.POST)
-        
-        if form.is_valid():
-            class_form = form.save(commit=False)
+        schedule_data = ClassScheduleForm(request.POST, user=request.user)
+        if not schedule_data.is_valid():
+            return render_home_edit(request, context, id_day_of_week, id_period)
+
+        save_new_class = schedule_data.cleaned_data.get('class_model') is None
+        # スケジュールに既存の授業が紐づいていない場合、授業を新規作成
+        if save_new_class:
+            class_data = ClassForm(request.POST)
+            
+            if not class_data.is_valid() or class_data.cleaned_data.get('class_name') in ["", None]:
+                return render_home_edit(request, context, id_day_of_week, id_period)
+            
+            # 授業情報を保存
+                
+            class_form = class_data.save(commit=False)
             class_form.author = request.user
             class_form.save()
+            
+            schedule_form = schedule_data.save(commit=False)
+            schedule_form.class_model = class_form
+                
+            schedule_form.save()
+            # 編集モードでindexにリダイレクト
             return redirect(reverse('app:index') + '?edit_mode=on')
-        
-        return render(request, "app/home-edit.html", {"form": ClassForm()}, context=context)
+                
+        else:
+            # 紐づける授業の情報がスケジュールにある場合、紐づけを行う
+            class_data = get_object_or_404(Class, pk=schedule_data.cleaned_data.get('class_model').id)
+            
+            schedule_form = schedule_data.save(commit=False)
+            schedule_form.class_model = class_data
+                
+            schedule_form.save()
+            # 編集モードでindexにリダイレクト
+            return redirect(reverse('app:index') + '?edit_mode=on')
+            
     
     elif request.method == "GET":
-        initial_data = {
-            "day_of_the_week": id_day_of_week - 1,
-            "period": id_period,
-        }
-        form = ClassForm(initial=initial_data)
-        context["form"] = form
-        return render(request, "app/home-edit.html", context=context)
+        return render_home_edit(request, context, id_day_of_week, id_period)
+
+# 授業追加画面を表示する処理をまとめた
+def render_home_edit(request, context, id_day_of_week, id_period):
+    context = get_class_context(request.user)
+    class_form = ClassForm()    
+    schedule_form = ClassScheduleForm(user = request.user, initial={
+        "day_of_the_week": id_day_of_week - 1,
+        "period": id_period,
+    })
+    context["class_form"] = class_form
+    context["schedule_form"] = schedule_form
+    
+    return render(request, "app/home-edit.html", context=context)
 
 @require_POST
 @login_required
-def delete_class(request, class_id):
+def delete_class(request, class_id, id_day_of_week, id_period):
     subject = get_object_or_404(Class, pk=class_id)
     if subject.author != request.user:
         return redirect('app:index')
-    subject.delete()
-    messages.success(request, "授業を削除しました。")
+    
+    # 授業スケジュールが1つ以下の場合、授業自体を削除
+    if subject.class_schedule_set.count() <= 1: 
+        subject.delete()
+    else:
+        # 複数の時間に同じ授業が割り当てられている場合、該当の時間のみ削除
+        schedule = get_object_or_404(
+            subject.class_schedule_set,
+            day_of_the_week=id_day_of_week,
+            period=id_period
+        )
+        schedule.delete()
     return redirect(reverse('app:index') + '?edit_mode=on')
 
 @login_required
-def class_edit(request):
-    return render(request, "app/class-edit.html")
+def class_edit(request, class_id):
+    subject = get_object_or_404(Class, pk=class_id)
+    if subject.author != request.user:
+        return redirect('app:index')
+    context = {"subject": subject}
+    return render(request, "app/class-edit.html", context=context)

@@ -6,6 +6,27 @@ class Class(models.Model):
     professor_name = models.CharField("教授名", max_length=100, blank=True, null=True)
     classroom_name = models.CharField("教室名", max_length=100, blank=True, null=True)
     
+    attendance_count = models.IntegerField("出席回数", default=0)
+    absence_count = models.IntegerField("欠席回数", default=0)
+    total_late_and_early_leave_count = models.IntegerField("遅刻・早退回数", default=0)
+    belongings = models.TextField("持ち物", blank=True, null=True)
+    examination = models.DateField("試験日程", blank=True, null=True)
+    
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="作成者",
+    )
+    
+    # 管理画面に授業名を表示
+    def __str__(self):
+        return self.class_name
+    
+
+class Class_schedule(models.Model):
+    
+    class_model = models.ForeignKey(Class, on_delete=models.CASCADE, blank=False, null=False)
+
     day_of_the_week = models.IntegerField("曜日", choices=[
         (0, '月曜日'),
         (1, '火曜日'),
@@ -24,24 +45,8 @@ class Class(models.Model):
         (7, "7限目"),
         (8, "8限目"),
     ])
-    
-    attendance_count = models.IntegerField("出席回数", default=0)
-    absence_count = models.IntegerField("欠席回数", default=0)
-    total_late_and_early_leave_count = models.IntegerField("遅刻・早退回数", default=0)
-    belongings = models.TextField("持ち物", blank=True, null=True)
-    examination = models.DateField("試験日程", blank=True, null=True)
-    
-    author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        verbose_name="作成者",
-    )
-    
-    # 管理画面に授業名を表示
     def __str__(self):
-        return self.class_name
-    
-
+        return f"スケジュール: {self.day_of_the_week}曜日 {self.period}限目"
 
 class Class_cancellation(models.Model):
     date = models.DateField("休講情報")

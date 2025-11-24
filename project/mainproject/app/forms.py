@@ -1,7 +1,9 @@
 from django import forms
 from .models import Class
+from .models import Class_schedule
 
 class ClassForm(forms.ModelForm):
+    # selected_class = forms.ModelChoiceField()
     class Meta:
         model = Class
         # 入力する項目を設定
@@ -9,8 +11,6 @@ class ClassForm(forms.ModelForm):
             'class_name',
             'professor_name',
             'classroom_name',
-            'day_of_the_week',
-            'period',
         ]
         widgets = {
             # TextInputウィジェットに、Bootstrapのクラス 'form-control' を設定
@@ -23,10 +23,42 @@ class ClassForm(forms.ModelForm):
             'classroom_name': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': '教室名を入力(任意)'}
             ),
-            'day_of_the_week': forms.Select(
-                attrs={'class': 'form-select'} # Bootstrap 5 のドロップダウン用クラス
-            ),
-            'period': forms.Select(
-                attrs={'class': 'form-select'}
-            ),
         }
+        
+    # フォームの初期化
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+        # 必須を一時的に解除
+        self.fields['class_name'].required = False
+        
+class ClassScheduleForm(forms.ModelForm):
+    class Meta:
+        model = Class_schedule
+        fields = [
+            'class_model',
+            'day_of_the_week',
+            'period',
+        ]
+        labels = {
+            'class_model': '授業',
+        }
+        
+        widgets = {
+            'class_model': forms.Select(
+                attrs={'class': 'form-select'} 
+            ),
+            'day_of_the_week': forms.HiddenInput(),
+            'period': forms.HiddenInput(),
+        }
+        
+    # フォームの初期化
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        
+        if user is not None:
+            # 表示する授業をユーザーごとにフィルタリング
+            self.fields['class_model'].queryset = Class.objects.filter(author=user)
+            # 必須を一時的に解除
+            self.fields['class_model'].required = False
