@@ -1,0 +1,134 @@
+
+.timetable-grid {
+    width: 95%;     
+    max-width: 1200px;    
+    margin: 30px auto;   
+    display: grid;
+    grid-auto-flow: column;
+    gap: 12px;
+    transition: grid-template-rows 0.3s ease, grid-template-columns 0.3s ease;
+}
+
+.card {
+    background: var(--card-bg);
+    color: var(--text-main);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    border: none;
+    height: 100%;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    min-height: 80px;
+    text-decoration: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.card.disabled-card {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.6;
+    box-shadow: none;
+}
+
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    color: var(--accent-color);
+}
+
+.card-body {
+    padding: 0.5rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: var(--text-sub);
+}
+
+.info-card {
+    background-color: transparent;
+    box-shadow: none;
+    color: var(--text-sub);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.btn-disabled {
+    pointer-events: none; 
+    cursor: default;  
+}
+
+.delete-btn {
+    pointer-events: auto;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+.btn-outline-secondary {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    line-height: 28px;
+    text-align: center;
+    border-color: #bdc3c7;
+    color: #bdc3c7;
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+.class-content p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.class-content p:first-child {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+
+.class-content p:nth-child(2) {
+    font-size: 0.85rem;
+    color: var(--text-sub);
+}
+
+
+.home-edit-display {
+    display: none;
+}
+
+.col {
+    height: 100%;
+}
+
+#home-edit-button {
+    background-color: var(--header-bg);
+    border: none;
+    box-shadow: var(--shadow-sm);
+}
+#home-edit-button:hover {
+    background-color: var(--text-main);
+}
+
+.add-item-button {
+    display: inline-block;
+    font-size: 1.5rem;
+    transition: transform 0.1s ease-out;
+}
+.rotate .add-item-button {
+    transform: rotate(45deg);
+}

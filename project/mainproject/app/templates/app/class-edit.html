@@ -4,145 +4,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="..." crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-
     <title>class-edit</title>
-    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/class-edit.css' %}">
     <link rel="stylesheet" href="{% static 'css/global-menu.css' %}">
+
 </head>
 <body>
     {% include "app/includes/global-menu.html" %}
     <div class="container">
-
         <a class="btn btn-outline-secondary mb-3" href="{% url 'app:index' %}">
             <i class="bi bi-arrow-left"></i>戻る
         </a>
-        <div class="card shadow-sm mb-5">
-            <div class="card-header d-flex">
-                <h2 id="class-basic-info-{{subject.pk}}-class-name">{{ subject.class_name }}</h2>
-                <button type="button" class="btn btn-outline-secondary ms-3" id="edit-class-basic-info-{{subject.pk}}" onclick="toggleEditClass('class-basic-info', '{{ subject.pk }}')">
+        
+        <!-- 基本情報カード -->
+        <div class="card class-item mb-5">
+            <div class="card-header d-flex bg-transparent border-bottom-0 pt-4 px-4">
+                <h2 class="item-title m-0" id="class-basic-info-{{subject.pk}}-class-name" style="font-size: 1.5rem;">{{ subject.class_name }}</h2>
+                <button type="button" class="btn btn-outline-secondary ms-3 btn-sm border-0" id="edit-class-basic-info-{{subject.pk}}" onclick="toggleEditClass('class-basic-info', '{{ subject.pk }}')">
                     <i class="bi bi-pencil js-display-class-basic-info-{{subject.pk}}"></i>
                     <i class="bi bi-arrow-counterclockwise js-display-class-basic-info-{{subject.pk}} hide-content"></i>
                 </button>
-    
             </div>
-            <div class="card-body">
-    
-                <div class="mt-3 js-display-class-basic-info-{{subject.pk}}" id="class-basic-info">
-                    <p class="d-flex">
-                        <i class="bi bi-geo-alt-fill me-2"></i>
+            <div class="card-body px-4 pb-4">
+                <div class="mt-2 js-display-class-basic-info-{{subject.pk}}" id="class-basic-info">
+                    <p class="d-flex align-items-center mb-2">
+                        <i class="bi bi-geo-alt-fill me-2 text-secondary"></i>
                         <span id="class-basic-info-{{subject.pk}}-classroom-name">{{ subject.classroom_name }}</span>
                     </p>   
-                    <p class="d-flex">
-                        <i class="bi bi-person-fill me-2"></i>
+                    <p class="d-flex align-items-center mb-0">
+                        <i class="bi bi-person-fill me-2 text-secondary"></i>
                         <span id="class-basic-info-{{subject.pk}}-professor-name">{{ subject.professor_name }}</span>
                     </p>
                 </div>
-                <form class="mb-3 js-display-class-basic-info-{{subject.pk}} hide-content" method="post" id="edit-form-class-basic-info-{{subject.pk}}" onsubmit="updateClassBasicInfo(event, '{{ subject.pk }}')">
+                <form class="mb-0 js-display-class-basic-info-{{subject.pk}} hide-content" method="post" id="edit-form-class-basic-info-{{subject.pk}}" onsubmit="updateClassBasicInfo(event, '{{ subject.pk }}')">
                     {% csrf_token %}
                     {{ class_basic_info_form.as_p }}
-                    <button class="btn btn-dark mt-3" type="submit">変更</button>
-                    
+                    <button class="btn btn-primary mt-3" type="submit">変更</button>
                 </form>
             </div>
         </div>
     
+        <!-- 宿題セクション -->
         <div class="mb-5">
-            <div class="align-items-center d-flex border-bottom">
-                <h3 class="mb-0">宿題</h3>
-                <button type="button" id="btn-add-homework" class="btn btn-link btn-lg text-decoration-none text-primary">+</button>
+            <div class="align-items-center d-flex border-bottom pb-2 mb-3">
+                <h3 class="item-title m-0">宿題</h3>
+                <button type="button" id="btn-add-homework" class="btn btn-link btn-lg text-decoration-none ms-auto p-0" style="line-height: 1;">
+                    <i class="bi bi-plus-circle-fill add-item-button"></i>
+                </button>
             </div>
-            <div id="homework-form" class="class-edit-form mt-3">
-                <div class="class-edit-form-content">
-                    <form class="mb-3" method = "post">
             
+            <div id="homework-form" class="class-edit-form">
+                <div class="class-edit-form-content class-item">
+                    <form class="mb-0" method="post">
                         {% csrf_token %}
                         {{ homework_form.as_p }}
-                        <button class="btn btn-dark mt-3" type="submit" name="submit-homework-form">追加</button>
-                        
+                        <div class="text-end">
+                            <button class="btn btn-primary mt-2" type="submit" name="submit-homework-form">追加</button>
+                        </div>
                     </form>
                 </div>
             </div>
+
             {% for homework in homeworks %}
-                <div class="card" id="homework-{{homework.item.pk}}">
-                    <div class="card-body">
-                        
-                        <div class="d-flex mb-3">
-                            <button type="button" class="btn btn-outline-secondary me-3 btn-edit-homework" id="edit-homework-{{homework.item.pk}}" onclick="toggleEditClass('homework', '{{ homework.item.pk }}')">
+                <div class="card class-item {% if homework.item.is_finished %} finished {% endif %}" id="homework-{{homework.item.pk}}">
+                    <div class="card-body d-flex flex-column">
+                        <!-- 編集・削除ボタン (右上などに配置も可能ですが、既存構造を維持しつつ整列) -->
+                        <div class="d-flex justify-content-end mb-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary me-2 btn-edit-homework border-0" id="edit-homework-{{homework.item.pk}}" onclick="toggleEditClass('homework', '{{ homework.item.pk }}')">
                                 <i class="bi bi-pencil js-display-homework-{{homework.item.pk}}"></i>
                                 <i class="bi bi-arrow-counterclockwise js-display-homework-{{homework.item.pk}} hide-content"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-danger btn-delete-homework" id="delete-homework-{{homework.item.pk}}" onclick="deleteHomework('{{homework.item.pk}}')">
-                                <i class="bi bi-x"></i>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete-homework border-0" id="delete-homework-{{homework.item.pk}}" onclick="deleteHomework('{{homework.item.pk}}')">
+                                <i class="bi bi-trash"></i>
                             </button>
                         </div>
     
-                        <div class="d-flex js-display-homework-{{homework.item.pk}}">
-                            <div class="form-check">
+                        <div class="d-flex align-items-start js-display-homework-{{homework.item.pk}}">
+                            <div class="form-check me-3">
+                                <!-- display_homeworkの円形チェックボックス風スタイルが適用されます -->
                                 <input type="checkbox" class="form-check-input" id="homework-{{ homework.item.pk }}-checkbox" value="" {% if homework.item.is_finished %} checked {% endif %} onclick="finish_homework('{{homework.item.pk}}')">
                             </div>
-                            <label class="card-text {% if homework.item.is_finished %}homework-finished{% endif %}" for="homework-{{ homework.item.pk }}-checkbox">
-                                締め切り: <span id="homework-{{ homework.item.pk }}-deadline">{{ homework.item.deadline|date:"Y年m月d日" }}</span><br>
-                                内容: <span id="homework-{{ homework.item.pk }}-content"> {{ homework.item.content|linebreaksbr  }}</span>
+                            <label class="card-text flex-grow-1 {% if homework.item.is_finished %}homework-finished{% endif %}" for="homework-{{ homework.item.pk }}-checkbox" style="cursor: pointer;">
+                                <div class="text-muted small mb-1">
+                                    締め切り: <span id="homework-{{ homework.item.pk }}-deadline" class="fw-bold">{{ homework.item.deadline|date:"Y年m月d日" }}</span>
+                                </div>
+                                <div id="homework-{{ homework.item.pk }}-content" class="fs-6">
+                                    {{ homework.item.content|linebreaksbr }}
+                                </div>
                             </label>
                         </div>
-                        <form class="mb-3 form-edit-homework js-display-homework-{{homework.item.pk}} hide-content" method="post" id="edit-form-homework-{{homework.item.pk}}" onsubmit="updateHomework(event, '{{ homework.item.pk }}')">
+
+                        <form class="mt-3 form-edit-homework js-display-homework-{{homework.item.pk}} hide-content" method="post" id="edit-form-homework-{{homework.item.pk}}" onsubmit="updateHomework(event, '{{ homework.item.pk }}')">
                             {% csrf_token %}
                             {{ homework.form.as_p }}
-                            <button class="btn btn-dark mt-3" type="submit">変更</button>
-                            
+                            <div class="text-end">
+                                <button class="btn btn-primary mt-2" type="submit">変更</button>
+                            </div>
                         </form>
                     </div>
-    
                 </div>
             {% endfor %}
         </div>
-            <div class="align-items-center d-flex border-bottom">
-                <h3 class="mb-0">メモ</h3>
-                <button type="button" id="btn-add-memo" class="btn btn-link btn-lg text-decoration-none text-primary">+</button>
+
+        <!-- メモセクション -->
+        <div class="mb-5">
+            <div class="align-items-center d-flex border-bottom pb-2 mb-3">
+                <h3 class="item-title m-0">メモ</h3>
+                <button type="button" id="btn-add-memo" class="btn btn-link btn-lg text-decoration-none ms-auto p-0" style="line-height: 1;">
+                    <i class="bi bi-plus-circle-fill add-item-button"></i>
+                </button>
             </div>
-            <div id="memo-form" class="class-edit-form mt-3">
-                <div class="class-edit-form-content">
-                    <form class="mb-3" method = "post">
-            
+
+            <div id="memo-form" class="class-edit-form">
+                <div class="class-edit-form-content class-item">
+                    <form class="mb-0" method="post">
                         {% csrf_token %}
                         {{ memo_form.as_p }}
-                        <button class="btn btn-dark mt-3" type="submit" name="submit-memo-form">追加</button>
-                        
+                        <div class="text-end">
+                            <button class="btn btn-primary mt-2" type="submit" name="submit-memo-form">追加</button>
+                        </div>
                     </form>
                 </div>
             </div>
+
             {% for memo in memos %}
-            <div class="card" id="memo-{{memo.item.pk}}">
+            <div class="card class-item" id="memo-{{memo.item.pk}}">
                 <div class="card-body">
-                    <div class="d-flex mb-3">
-                        <button type="button" class="btn btn-outline-secondary me-3 btn-edit-memo" id="edit-memo-{{memo.item.pk}}" onclick="toggleEditClass('memo', '{{ memo.item.pk }}')">
+                    <div class="d-flex justify-content-end mb-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary me-2 btn-edit-memo border-0" id="edit-memo-{{memo.item.pk}}" onclick="toggleEditClass('memo', '{{ memo.item.pk }}')">
                             <i class="bi bi-pencil js-display-memo-{{memo.item.pk}}"></i>
                             <i class="bi bi-arrow-counterclockwise hide-content js-display-memo-{{memo.item.pk}}"></i>
                         </button>
-                        <button type="button" class="btn btn-outline-danger btn-delete-memo" id="delete-memo-{{memo.item.pk}}" onclick="deleteMemo('{{memo.item.pk}}')">
-                            <i class="bi bi-x"></i>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-delete-memo border-0" id="delete-memo-{{memo.item.pk}}" onclick="deleteMemo('{{memo.item.pk}}')">
+                            <i class="bi bi-trash"></i>
                         </button>
-    
                     </div>
-                    <p class="card-text js-display-memo-{{memo.item.pk}}" id="memo-{{memo.item.pk}}-content">
+
+                    <div class="card-text js-display-memo-{{memo.item.pk}} px-2" id="memo-{{memo.item.pk}}-content">
                         {{ memo.item.content|linebreaksbr }}
-                    </p>
+                    </div>
                     
-                    <form class="mb-3 js-display-memo-{{memo.item.pk}} form-edit-memo hide-content" method = "post" id="edit-form-memo-{{memo.item.pk}}" onsubmit="updateMemo(event, '{{ memo.item.pk }}')">
+                    <form class="mt-3 js-display-memo-{{memo.item.pk}} form-edit-memo hide-content" method="post" id="edit-form-memo-{{memo.item.pk}}" onsubmit="updateMemo(event, '{{ memo.item.pk }}')">
                         {% csrf_token %}
                         {{ memo.form.as_p }}
-                        <button class="btn btn-dark mt-3" type="submit">変更</button>
-                        
+                        <div class="text-end">
+                            <button class="btn btn-primary mt-2" type="submit">変更</button>
+                        </div>
                     </form>
                 </div>
             </div>
             {% endfor %}
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="..." crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="{% static 'js/class-edit.js' %}"></script>
 
 </body>

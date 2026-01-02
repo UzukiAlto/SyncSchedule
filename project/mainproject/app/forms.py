@@ -82,6 +82,8 @@ class ClassScheduleForm(forms.ModelForm):
             self.fields['class_model'].queryset = Class.objects.filter(author=user)
             # 必須を一時的に解除
             self.fields['class_model'].required = False
+            # デフォルトの「---------」を変更
+            self.fields['class_model'].empty_label = "授業を選択してください"
             
             
 class HomeworkForm(forms.ModelForm):
