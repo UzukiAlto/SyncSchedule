@@ -1,108 +1,94 @@
+
 @media (min-width: 768px) {
-  .seven-cols .col-md-1,
-  .seven-cols .col-sm-1,
-  .seven-cols .col-lg-1 {
-    width: 100%;
-  }
+    .seven-cols .col-md-1,
+    .seven-cols .col-sm-1,
+    .seven-cols .col-lg-1 {
+        width: 100%;
+    }
 }
 
 @media (min-width: 992px) {
-  .seven-cols .col-md-1,
-  .seven-cols .col-sm-1,
-  .seven-cols .col-lg-1 {
-    width: 14.285714285714285714285714285714%;
-  }
+    .seven-cols .col-md-1,
+    .seven-cols .col-sm-1,
+    .seven-cols .col-lg-1 {
+        width: 14.285714285714285714285714285714%;
+    }
 }
 
 @media (min-width: 1200px) {
-  .seven-cols .col-md-1,
-  .seven-cols .col-sm-1,
-  .seven-cols .col-lg-1 {
-    width: 14.285714285714285714285714285714%;
-  }
+    .seven-cols .col-md-1,
+    .seven-cols .col-sm-1,
+    .seven-cols .col-lg-1 {
+        width: 14.285714285714285714285714285714%;
+    }
+}
+
+:root {
+    --bg-color: #f0f2f5;      
+    --header-bg: #34495e;     
+    --card-bg: #ffffff;       
+    --text-main: #2c3e50;     
+    --text-sub: #7f8c8d;      
+    --accent-color: #3498db;  
+    --border-radius: 8px;     
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-hover: 0 5px 15px rgba(0,0,0,0.1);
+    
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
 }
 
 .container {
-  width: 90%;     
-  max-width: 1000px;    
-  margin: 0 auto; 
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
 }
 
-.card {
-  box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.4);
+h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
 }
 
-.timetable-grid {
-  width: 90%;     
-  max-width: 1000px;    
-  margin: 0 auto;   
 
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-rows: 60px repeat(var(--timetable-row), 1fr);
-  grid-template-columns: repeat(var(--timetable-column), 1fr);
-
-  gap: 10px;
-}
-
-.home-edit-display {
-  display: none;
-}
-
-.btn-disabled {
-  pointer-events: none; 
-  cursor: default;  
-}
-
-.delete-btn {
-  pointer-events: auto;
-}
-
-/* 1. 通常時（選ばれていないとき）のタブ */
-.nav-tabs .nav-link {
-    background-color: #f8f9fa; /* 薄いグレー */
-    color: #6c757d;           /* 文字はグレー */
-    border: 1px solid #dee2e6;
-    margin-right: 4px;        /* タブ同士を少し離す */
-}
-
-/* 2. マウスが乗ったとき */
-.nav-tabs .nav-link:hover {
-    background-color: #e9ecef; /* 少し濃いグレー */
-    border-color: #dee2e6;
-}
-
-/* 3. 選ばれている（active）とき */
-.nav-tabs .nav-link.active {
-    background-color: #0d6efd; /* 青色（BootstrapのPrimary色） */
-    color: white;              /* 文字を白に */
-    border-color: #0d6efd;     /* 枠線も青に */
-}
 .hide-content {
-  display: none !important;
-
+    display: none !important;
 }
 
-.class-edit-form {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.3s ease-out;
+.add-item-button {
+    display: inline-block;
+    font-size: 1.5rem;
+    transition: transform 0.1s ease-out;
 }
-.class-edit-form.is-open {
-  grid-template-rows: 1fr;
-}
-.class-edit-form-content {
-  overflow: hidden;
-}
-.homework-finished {
-  text-decoration: line-through;
-  color: gray; 
+.rotate .add-item-button {
+    transform: rotate(45deg);
 }
 
-.form-check-input{
-  background-color: rgba(59, 130, 246, 0.1);
-  width: 1.1em;
-  height: 1.1em;
-  border: 1px solid #3b82f6;
-  transition: all 0.2s ease;
+.bi {
+    vertical-align: middle;
 }
+
+.card-body {
+    padding: 1.25rem;
+}
+
+.btn-link {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+.btn-link:hover {
+    color: #2980b9;
+}
+
+.mb-5 {
+    margin-bottom: 2rem !important; /* 少し詰める */
+}
+

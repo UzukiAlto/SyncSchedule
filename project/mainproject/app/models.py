@@ -76,4 +76,25 @@ class Memo(models.Model):
     def __str__(self):
         return self.content[:20]  # 先頭の20文字を表示
 
+class TimeFrame(models.Model):
+    period = models.IntegerField("時限", choices=[
+        (1, "1限目"),
+        (2, "2限目"),
+        (3, "3限目"),
+        (4, "4限目"),
+        (5, "5限目"),
+        (6, "6限目"),
+        (7, "7限目"),
+        (8, "8限目"),
+    ])
+    start_time = models.TimeField("開始時間")
+    end_time = models.TimeField("終了時間")
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="作成者",
+    )
     
+    
+    def __str__(self):
+        return f"{self.period}限目: {self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')}"

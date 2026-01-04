@@ -51,14 +51,35 @@ const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
 buttonHomeworkForm.addEventListener('click', () => {
     const homeworkForm = document.getElementById('homework-form');
-    homeworkForm.classList.toggle('is-open');
-    buttonHomeworkForm.textContent = homeworkForm.classList.contains('is-open') ? '-' : '+';
+    const formContent = homeworkForm.querySelector('.class-edit-form-content');
+    buttonHomeworkForm.classList.toggle('rotate');
+
+    // formを開けるときは余白を追加してから開き、閉じるときは閉じてから余白を削除
+    if(homeworkForm.classList.contains('is-open')){
+        buttonHomeworkForm.addEventListener('transitionend', () => {
+            formContent.classList.remove('form-padding');
+        }, {once: true});
+        homeworkForm.classList.remove('is-open');
+    } else {
+        formContent.classList.add('form-padding');
+        homeworkForm.classList.add('is-open');
+    }
 })
 
 buttonMemoForm.addEventListener('click', () => {
     const memoForm = document.getElementById('memo-form');
-    memoForm.classList.toggle('is-open');
-    buttonMemoForm.textContent = memoForm.classList.contains('is-open') ? '-' : '+';
+    const formContent = memoForm.querySelector('.class-edit-form-content');
+    buttonMemoForm.classList.toggle('rotate');
+
+    if(memoForm.classList.contains('is-open')){
+        buttonMemoForm.addEventListener('transitionend', () => {
+            formContent.classList.remove('form-padding');
+        }, {once: true});
+        memoForm.classList.remove('is-open');
+    } else {
+        formContent.classList.add('form-padding');
+        memoForm.classList.add('is-open');
+    }
 })
 
 
@@ -71,7 +92,7 @@ async function updateData(elementUpdateParams) {
 
     // フォーム送信をキャンセルして割り込む
     elementUpdateParams.event.preventDefault();
-    const formElement = document.getElementById(`edit-form-${elementUpdateParams.elementType}-${elementUpdateParams.id}`);
+    const formElement = elementUpdateParams.event.currentTarget;
     const formData = new FormData(formElement);
     // jsonとして送るデータ
     const body = { id: elementUpdateParams.id };
@@ -140,7 +161,7 @@ async function updateClassBasicInfo(event, classId) {
         id: classId,
         contents: ['class_name', 'classroom_name', 'professor_name']
     })
-    updateData(classBasicInfoParam);
+    await updateData(classBasicInfoParam);
 }
 
 /**
@@ -154,14 +175,14 @@ function toggleEditClass(elementType, elementId) {
     });
 }
 
-function updateMemo(event, memoId) {
+async function updateMemo(event, memoId) {
     const memoUpdateParams = new ElementUpdateParams({
         event: event,
         elementType: elementTypes.memo,
         id: memoId,
         contents: ["content"]
     });
-    updateData(memoUpdateParams);
+    await updateData(memoUpdateParams);
 }
 
 function deleteMemo(memoId) {
@@ -179,7 +200,7 @@ async function updateHomework(event, homeworkId) {
         id: homeworkId,
         contents: ['deadline', 'content']
     });
-    updateData(homeworkUpdateParam);
+    await updateData(homeworkUpdateParam);
 }
 
 async function deleteHomework(homeworkId) {
@@ -193,6 +214,7 @@ async function deleteHomework(homeworkId) {
 async function finish_homework(homeworkId) {
     try{
         const checkbox = document.getElementById(`homework-${homeworkId}-checkbox`);
+        const homeworkCard = document.getElementById(`homework-${homeworkId}`);
         const response = await fetch('/update/homework/finish/', {
             method: 'POST',
             headers: {
@@ -207,8 +229,9 @@ async function finish_homework(homeworkId) {
         });
         const data = await response.json();
         if (data.status === 'success'){
-            const homeworkContent = document.querySelector(`#homework-${homeworkId} .card-text`);
+            const homeworkContent = homeworkCard.querySelector(`.card-text`);
             homeworkContent.classList.toggle('homework-finished', data.is_finished);
+            homeworkCard.classList.toggle('finished');
         } else {
             alert('Error:'+ data.message);
         }
