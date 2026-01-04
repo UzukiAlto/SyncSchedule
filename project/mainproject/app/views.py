@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 import json
-from .models import Class, Homework, Memo, Class_cancellation
+from .models import Class, Homework, Memo, TimeFrame
 # from django.http import HttpResponse
-from .forms import ClassForm, ClassBasicInfoForm, ClassScheduleForm, HomeworkForm, MemoForm
+from .forms import ClassForm, ClassBasicInfoForm, ClassScheduleForm, HomeworkForm, MemoForm, TimeFrameForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
@@ -70,15 +70,72 @@ def get_class_context(user):
 @login_required
 def index(request):
     context = get_class_context(request.user)
+    
     if 'edit_mode' in request.GET and request.GET['edit_mode'] == 'on':
         context['is_editing'] = True
+        
+    time_frames = {}
+    time_frame_forms = {}
+    for time_frame_data in TimeFrame.objects.filter(author=request.user):
+        time_frames[time_frame_data.period] = time_frame_data
+        time_frame_forms[time_frame_data.period] = TimeFrameForm(instance=time_frame_data)
+        
+    # 存在しない時限のデータをNoneで埋める
+    for period in range(1,9):
+        if period not in time_frames:
+            time_frames[period] = TimeFrame(period=period, start_time="", end_time="")
+            time_frame_forms[period] = TimeFrameForm(initial={"period": period})
+    
+    # その時限に授業があるか、時限の始まる時間と終わる時間、更新用のform
+    period_context = [{
+        "exist": False, 
+        "time_frame": None,
+        "form": None
+        } for _ in range(8)]
+    
+    for period in range(1,9):
+        period_context[period - 1] = {
+            "exist": context["exist_class_per_period_list"][period - 1],
+            "time_frame": time_frames[period],
+            "form": time_frame_forms[period],
+        }
+    
+    context["period_context"] = period_context
     return render(request, "app/index.html", context=context)
+
+def edit_time_frame(request):
+    if request.method == "POST":
+        try:
+            form = TimeFrameForm(request.POST)
+            if form is None or not form.is_valid():
+                return JsonResponse({'status': 'error', 'message': 'Invalid form data'}, status=400)
+            # 既存のTimeFrameを取得し、なければNoneを返す
+            time_frame_data = TimeFrame.objects.filter(author=request.user, period=form.cleaned_data.get('period')).first()
+            # 新規作成
+            if time_frame_data is None:
+                new_time_form = form.save(commit=False)
+                new_time_form.author = request.user
+                new_time_form.save()
+            # 更新
+            else:
+                time_frame_data.start_time = form.cleaned_data.get('start_time')
+                time_frame_data.end_time = form.cleaned_data.get('end_time')
+                time_frame_data.save()
+                
+            return JsonResponse({
+                'status': 'success',
+                'new_start_time': form.cleaned_data.get('start_time').strftime('%H:%M'),
+                'new_end_time': form.cleaned_data.get('end_time').strftime('%H:%M')
+            })
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
 
 # ログインしていないユーザーがアクセスすると
 # -> settings.LOGIN_URL にリダイレクトされます。
 
 @login_required
-def home_edit(request, username, id_day_of_week, id_period):
+def home_edit(request, id_day_of_week, id_period):
     context = get_class_context(request.user)
     
     if request.method == "POST":
@@ -122,7 +179,7 @@ def home_edit(request, username, id_day_of_week, id_period):
     elif request.method == "GET":
         return render_home_edit(request, context, id_day_of_week, id_period)
 
-# 授業追加画面を表示する処理をまとめた
+# home_edit()で授業追加画面を表示する処理
 def render_home_edit(request, context, id_day_of_week, id_period):
     context = get_class_context(request.user)
     class_form = ClassForm()    
@@ -171,7 +228,6 @@ def class_edit(request, class_id):
             new_homework.save()
             
         elif 'submit-memo-form' in request.POST and memo_form.is_valid():
-            print("memo_form is valid")
             new_memo = memo_form.save(commit=False)
             new_memo.class_model = subject
             new_memo.save()
@@ -184,16 +240,21 @@ def class_edit(request, class_id):
         
         # 授業名、教室名、教授名編集用フォーム
         class_basic_info_form = ClassBasicInfoForm(instance=subject)
+
+        # htmlに渡す用にメモの内容とフォームを追加
         memos = []
         for memo_item in memo_items:
             memos.append({"item": memo_item, "form": MemoForm(initial={"content": memo_item.content})})
         
+        # htmlに渡す用に宿題の内容とフォームを追加
         homeworks = []
         for homework_item in homework_items:
             homeworks.append({"item": homework_item, "form": HomeworkForm(initial={
                 "deadline": homework_item.deadline,
                 "content": homework_item.content,
             })})
+            
+        # 新規追加用フォーム
         homework_form = HomeworkForm()
         memo_add_form = MemoForm()
         
@@ -217,7 +278,6 @@ def update_class_basic_info(request):
             subject.professor_name = data.get('professor_name')
             subject.classroom_name = data.get('classroom_name')
             subject.save()
-            print("Class basic info updated successfully")
             # htmlではなくjsonを返す
             return JsonResponse({
                 'status': 'success', 
@@ -286,11 +346,9 @@ def update_homework(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
 
 def finish_homework(request):
-    print("finish_homework called")
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            print(f"finish homework data received: {data}")
             
             homework = get_object_or_404(Homework, pk=data.get('id'))
             homework.is_finished = data.get('is_finished')
@@ -305,12 +363,14 @@ def delete_homework(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
+            
             homework_id = data.get('id')
             homework = get_object_or_404(Homework, pk=homework_id)
             if homework.class_model.author != request.user:
                 return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
             
             homework.delete()
+            
             return JsonResponse({'status': 'success'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

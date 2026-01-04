@@ -1,6 +1,6 @@
 from django import forms
 from .models import Class
-from .models import Class_schedule, Homework, Memo
+from .models import Class_schedule, Homework, Memo, TimeFrame
 
 class ClassForm(forms.ModelForm):
     # selected_class = forms.ModelChoiceField()
@@ -112,5 +112,24 @@ class MemoForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(
                 attrs={'class': 'form-control', 'placeholder': 'メモの内容を入力'}
+            ),
+        }
+        
+class TimeFrameForm(forms.ModelForm):
+    class Meta:
+        model = TimeFrame
+        fields = [
+            'period',
+            'start_time',
+            'end_time',
+        ]
+        
+        widgets = {
+            'period': forms.HiddenInput(),
+            'start_time': forms.TimeInput(
+                attrs={'class': 'form-control', 'type': 'time', 'placeholder': '開始時間を入力', 'required': True}
+            ),
+            'end_time': forms.TimeInput(
+                attrs={'class': 'form-control', 'type': 'time', 'placeholder': '終了時間を入力', 'required': True}
             ),
         }
