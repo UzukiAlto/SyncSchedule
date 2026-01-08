@@ -5,6 +5,16 @@ class Class(models.Model):
     class_name = models.CharField("授業名", max_length=100)
     professor_name = models.CharField("教授名", max_length=100, blank=True, null=True)
     classroom_name = models.CharField("教室名", max_length=100, blank=True, null=True)
+    color = models.CharField("色", max_length=7, default="#f5f5f5", choices=[
+        ("#f5f5f5", "グレー"), 
+        ("#ffebee", "レッド"),
+        ("#fff3e0", "オレンジ"), 
+        ("#fffde7", "イエロー"), 
+        ("#f1f8e9", "グリーン"), 
+        ("#e1f5fe", "ブルー"), 
+        ("#f3e5f5", "パープル"), 
+        ("#e0f2f1", "ミント"), 
+    ])
     
     attendance_count = models.IntegerField("出席回数", default=0)
     absence_count = models.IntegerField("欠席回数", default=0)

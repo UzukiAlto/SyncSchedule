@@ -277,13 +277,15 @@ def update_class_basic_info(request):
             subject.class_name = data.get('class_name')
             subject.professor_name = data.get('professor_name')
             subject.classroom_name = data.get('classroom_name')
+            subject.color = data.get('color')
             subject.save()
             # htmlではなくjsonを返す
             return JsonResponse({
                 'status': 'success', 
                 'new_class_name': subject.class_name,
                 'new_classroom_name': subject.classroom_name,
-                'new_professor_name': subject.professor_name
+                'new_professor_name': subject.professor_name,
+                'new_color': subject.color
             })
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

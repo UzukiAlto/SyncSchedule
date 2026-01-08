@@ -9,20 +9,22 @@ class ClassForm(forms.ModelForm):
         # 入力する項目を設定
         fields = [
             'class_name',
-            'professor_name',
             'classroom_name',
+            'professor_name',
+            'color'
         ]
         widgets = {
             # TextInputウィジェットに、Bootstrapのクラス 'form-control' を設定
             'class_name': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': '授業名を入力'}
             ),
-            'professor_name': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': '担当教授名を入力(任意)'}
-            ),
             'classroom_name': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': '教室名を入力(任意)'}
             ),
+            'professor_name': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': '担当教授名を入力(任意)'}
+            ),
+            'color': forms.RadioSelect(),
         }
         
     # フォームの初期化
@@ -39,6 +41,7 @@ class ClassBasicInfoForm(forms.ModelForm):
             'class_name',
             'classroom_name',
             'professor_name',
+            'color'
         ]
         widgets = {
             'class_name': forms.TextInput(
@@ -50,6 +53,7 @@ class ClassBasicInfoForm(forms.ModelForm):
             'professor_name': forms.TextInput(
                 attrs={'class': 'form-control'}
             ),
+            'color': forms.RadioSelect(),
         }
 
 class ClassScheduleForm(forms.ModelForm):
