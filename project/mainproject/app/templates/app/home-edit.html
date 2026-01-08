@@ -36,9 +36,31 @@
                 <div class="tab-item class-form active">
                     <form method="post">
                         {% csrf_token %}
-                        {{ class_form.as_p }}
+                        <p>
+                            
+                            {{ class_form.class_name.label_tag }}
+                            {{ class_form.class_name }}
+
+                            {{ class_form.classroom_name.label_tag }}
+                            {{ class_form.classroom_name }}
+
+                            {{ class_form.professor_name.label_tag }}
+                            {{ class_form.professor_name }}
+
+                            {{ class_form.color.label_tag }}
+
+                            <div class="color-radio-grid">
+                                {% for color_radio in class_form.color %}
+                                <div class="color-option">
+                                    {{ color_radio.tag }} <label for="{{ color_radio.id_for_label }}" style="background-color: {{ color_radio.data.value }};">
+                                        {{ color_radio.choice_label }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </p>
                         <div style="display: none;">
-                            {{ schedule_form.as_p }}
+                            {{ schedule_form }}
                         </div>
                         <button class="btn btn-submit mt-3" type="submit">決定</button>
                     </form>
@@ -48,7 +70,7 @@
                     <form method="post">
                         {% csrf_token %}
                         <div style="display: none;">
-                            {{ class_form.as_p }}
+                            {{ class_form }}
                         </div>
                         {{ schedule_form.as_p }}
                         <button class="btn btn-submit mt-3" type="submit">決定</button>

@@ -1,6 +1,6 @@
 
 :root{
-    --template-info-size: 2rem;
+    --template-info-size: 3rem;
     --template-rows-count: 8;
     --template-rows-size: 100px;
     --template-columns-count: 7;
@@ -9,7 +9,7 @@
 .timetable-grid {
     width: 95%;     
     max-width: 1200px;    
-    margin: 30px auto;   
+    margin: 10px 20px;   
     display: grid;
     grid-auto-flow: column;
     gap: 12px;
@@ -84,7 +84,6 @@
 .delete-btn {
     pointer-events: auto;
     font-size: 0.8rem;
-    margin-top: 0.3rem;
 }
 
 .btn-outline-secondary {

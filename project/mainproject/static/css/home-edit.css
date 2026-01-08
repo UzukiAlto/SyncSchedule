@@ -61,17 +61,6 @@
     font-size: 1rem; 
 }
 
-p {
-    margin-bottom: 1rem;
-}
-
-label {
-    font-weight: bold;
-    color: var(--text-main);
-    margin-bottom: 5px;
-    display: block;
-}
-
 .btn-submit {
     background-color: var(--header-bg);
     color: white;

@@ -88,7 +88,7 @@
         
         {% if subject.exist_class_par_week and subject.content is not None %}
         <div class="col">
-            <a class="class-content card" href="{% url 'app:class_edit' subject.content.id %}">
+            <a class="class-content card" href="{% url 'app:class_edit' subject.content.id %}" style="background-color: {{ subject.content.color }};">
                 <p>{{ subject.content.class_name }}</p>
                 
                 {% if subject.content.classroom_name is not None %}

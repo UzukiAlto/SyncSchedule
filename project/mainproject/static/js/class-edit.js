@@ -113,7 +113,15 @@ async function updateData(elementUpdateParams) {
         const data = await response.json();
         if (data.status === 'success') {
             elementUpdateParams.contents.forEach((content) => {
-                document.getElementById(`${elementUpdateParams.elementType.split('_').join('-')}-${elementUpdateParams.id}-${content.split('_').join('-')}`).innerText = data[`new_${content}`];
+                if(content === 'color'){
+                    document.getElementById(`class-basic-info-${elementUpdateParams.id}-class-name`).style.borderLeft = `6px solid ${data[`new_color`]}`
+                    
+                } else{
+                    let element = document.getElementById(`${elementUpdateParams.elementType.split('_').join('-')}-${elementUpdateParams.id}-${content.split('_').join('-')}`);
+                    if(element){
+                        element.innerText = data[`new_${content}`];
+                    }
+                }
             });
 
             toggleEditClass(elementUpdateParams.elementType, elementUpdateParams.id);
@@ -159,7 +167,7 @@ async function updateClassBasicInfo(event, classId) {
         event: event,
         elementType: elementTypes.classBasicInfo,
         id: classId,
-        contents: ['class_name', 'classroom_name', 'professor_name']
+        contents: ['class_name', 'classroom_name', 'professor_name', 'color']
     })
     await updateData(classBasicInfoParam);
 }

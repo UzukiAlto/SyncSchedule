@@ -32,6 +32,9 @@ h1 {
     font-weight: bold;
     letter-spacing: 0.05em;
 }
+p {
+    margin-bottom: 1rem;
+}
 
 
 .hide-content {
@@ -64,6 +67,39 @@ h1 {
 }
 
 .mb-5 {
-    margin-bottom: 2rem !important; /* 少し詰める */
+    margin-bottom: 2rem !important;
+}
+
+label {
+    font-weight: bold;
+    color: var(--text-main);
+    margin-bottom: 5px;
+    display: block;
+}
+
+.color-radio-grid {
+    display: grid;
+    width: 50%;
+    gap: 5px;
+    grid-template-columns: repeat(4, 1fr);
+}
+.color-option input[type="radio"]{
+    display: none;
+}
+
+.color-option label {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #dddddd;
+    text-indent: -9999px;
+    margin: 5px;
+}
+
+.color-option input[type="radio"]:checked + label {
+    border: 3px solid #333333;
+    transform: scale(1.1);
 }
 

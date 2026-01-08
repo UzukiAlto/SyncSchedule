@@ -22,7 +22,9 @@
         
         <div class="card class-item mb-5">
             <div class="card-header d-flex bg-transparent border-bottom-0 pt-4 px-4">
-                <h2 class="item-title m-0" id="class-basic-info-{{subject.pk}}-class-name" style="font-size: 1.5rem;">{{ subject.class_name }}</h2>
+                <h2 class="item-title" id="class-basic-info-{{subject.pk}}-class-name" style="padding-left: 5px; font-size: 1.5rem; border-left: 6px solid {{ subject.color }};">
+                    {{ subject.class_name }}
+                </h2>
                 <button type="button" class="btn btn-outline-secondary ms-3 btn-sm border-0" id="edit-class-basic-info-{{subject.pk}}" onclick="toggleEditClass('class-basic-info', '{{ subject.pk }}')">
                     <i class="bi bi-pencil js-display-class-basic-info-{{subject.pk}}"></i>
                     <i class="bi bi-arrow-counterclockwise js-display-class-basic-info-{{subject.pk}} hide-content"></i>
@@ -47,9 +49,31 @@
                     </p>
                         
                 </div>
+                
                 <form class="mb-0 js-display-class-basic-info-{{subject.pk}} hide-content" method="post" id="edit-form-class-basic-info-{{subject.pk}}" onsubmit="updateClassBasicInfo(event, '{{ subject.pk }}')">
                     {% csrf_token %}
-                    {{ class_basic_info_form.as_p }}
+                        <p>
+                            {{ class_basic_info_form.class_name.label_tag }}
+                            {{ class_basic_info_form.class_name }}
+
+                            {{ class_basic_info_form.classroom_name.label_tag }}
+                            {{ class_basic_info_form.classroom_name }}
+
+                            {{ class_basic_info_form.professor_name.label_tag }}
+                            {{ class_basic_info_form.professor_name }}
+
+                            {{ class_basic_info_form.color.label_tag }}
+
+                            <div class="color-radio-grid">
+                                {% for color_radio in class_basic_info_form.color %}
+                                <div class="color-option">
+                                    {{ color_radio.tag }} <label for="{{ color_radio.id_for_label }}" style="background-color: {{ color_radio.data.value }};">
+                                        {{ color_radio.choice_label }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </p>
                     <button class="btn btn-primary mt-3" type="submit">変更</button>
                 </form>
             </div>
