@@ -1,6 +1,13 @@
+databases:
+  - name: SyncSchedule-db 
+    databaseName: SyncSchedule
+    user: SyncSchedule_user
+    plan: free
+    region: oregon 
+
 services:
   - type: web
-    name: mymoviesapp
+    name: SyncSchedule-app
     env: python
     plan: free
     region: oregon
@@ -8,12 +15,16 @@ services:
       pip install -r requirements.txt
       python manage.py migrate
       python manage.py collectstatic --noinput
-    startCommand: gunicorn mymoviesapp.wsgi:application
+    startCommand: gunicorn mainproject.wsgi:application
     autoDeploy: true
     envVars:
-      - key: TMDB_API_KEY
-        fromSecret: TMDB_API_KEY
+      - key: SECRET_KEY
+        generateValue: true
       - key: DEBUG
-        fromSecret: DEBUG
+        value: "False" 
       - key: ALLOWED_HOSTS
         fromSecret: ALLOWED_HOSTS
+      - key: DATABASE_URL
+        fromDatabase:
+          name: SyncSchedule-db
+          property: connectionString
