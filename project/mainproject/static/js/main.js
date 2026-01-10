@@ -3,13 +3,14 @@ const rootElement = document.documentElement;
 // 編集ボタンを取得
 const homeEditButton = document.getElementById('home-edit-button');
 
-// htmlの<body>にあるdata属性からデータを取得
+// htmlの<main>にあるdata属性からデータを取得
+const mainElement = document.querySelector('main');
 // 現在の編集モード
-let isEditing = document.body.dataset.isEditing === "true";
+let isEditing = mainElement.dataset.isEditing === "true";
 // 時間割の行・列数
-let timetableRow = parseInt(document.body.dataset.timetableRow);
+let timetableRow = parseInt(mainElement.dataset.timetableRow);
 const timetableRowMax = 8;
-let timetableColumn = parseInt(document.body.dataset.timetableColumn);
+let timetableColumn = parseInt(mainElement.dataset.timetableColumn);
 const timetableColumnMax = 7;
 
 rootElement.style.setProperty('--template-rows-count', timetableRow);
@@ -17,13 +18,13 @@ rootElement.style.setProperty('--template-columns-count', timetableColumn);
 
 // 編集用の要素を表示
 const enableEditContents = () => {
-    document.body.classList.add('edit-mode');
+    mainElement.classList.add('edit-mode');
 };
 
 // 編集用の要素を非表示
 const disableEditContents = () => {
     
-    document.body.classList.remove('edit-mode');
+    mainElement.classList.remove('edit-mode');
 };
 
 

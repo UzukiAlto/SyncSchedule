@@ -143,7 +143,6 @@ STATICFILES_FINDERS = [
 LOGIN_URL = '/accounts/login/'
 # ログイン後のリダイレクト先URLを設定
 LOGIN_REDIRECT_URL = '/'
-STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]

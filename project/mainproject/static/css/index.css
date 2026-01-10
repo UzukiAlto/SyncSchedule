@@ -15,7 +15,6 @@
     gap: 12px;
     grid-template-rows: var(--template-info-size) repeat(var(--template-rows-count), var(--template-rows-size));
     grid-template-columns: repeat(var(--template-columns-count), 1fr);
-    transition: grid-template-rows 0.3s ease, grid-template-columns 0.3s ease;
 }
 
 .card {
@@ -152,7 +151,7 @@
 }
 
 .edit-mode{
-    & .timetable-grid{
+    &.timetable-grid{
         grid-template-rows: var(--template-info-size) repeat(8, calc(var(--template-rows-size) * 1.3));
         grid-template-columns: repeat(7, 1fr);
     }
