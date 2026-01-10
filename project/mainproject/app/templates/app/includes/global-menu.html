@@ -8,6 +8,7 @@
             <span class="navbar-toggler-icon navbar-dark"></span>
         </button>
         
+        {% if user.is_authenticated %}
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
@@ -21,7 +22,7 @@
                     </a>
                 </li>
             </ul>
-            
+        {% endif %}
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
