@@ -1,12 +1,18 @@
 {% extends 'app/includes/base.html' %}
 {% load static %}
 
+
+{% block og_title %}
+    授業詳細
+{% endblock og_title %}
+    
+
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/class-edit.css' %}">
 {% endblock extra_css %}
 
 {% block title %}
-    授業編集
+    授業詳細
 {% endblock title %}
 
 

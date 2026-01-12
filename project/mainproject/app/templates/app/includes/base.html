@@ -1,9 +1,19 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ja">
-    <head>
+    <head prefix="og: https://ogp.me/ns#">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="{% block og_title %}{% endblock %} | Sync Schedule"/>
+        <meta property="og:description" content="Sync Scheduleは、同一の授業を複数のコマに配置可能な時間割管理アプリです。" />
+        <meta property="og:site_name" content="Sync Schedule" />
+        <meta property="og:locale" content="ja_JP" /> 
+        {% with og_image_url=request.scheme|add:"://"|add:request.get_host|add:STATIC_URL|add:"img/og_screenshot.jpg" %}
+        <meta property="og:image" content="{{ og_image_url }}" />
+        <meta name="twitter:card" content="summary_large_image" />
 
         <link rel="icon" type="image/png" href="{% static 'favicons/favicon-96x96.png' %}" sizes="96x96"/>
         <link rel="icon" type="image/svg+xml" href="{% static 'favicons/favicon.svg' %}"/>
