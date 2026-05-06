@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import json
 from .models import Class, Homework, Memo, TimeFrame
 # from django.http import HttpResponse
@@ -11,6 +11,7 @@ from django.urls import reverse
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.db import connection
 
 # 授業の情報を取得してコンテキストを作成
 def get_class_context(user):
@@ -376,3 +377,9 @@ def delete_homework(request):
             return JsonResponse({'status': 'success'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+def health_check(request):
+    # データベースに軽くアクセスして生存確認
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT 1")
+    return HttpResponse("OK")
