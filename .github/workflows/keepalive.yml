@@ -11,4 +11,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Render app
-        run: curl -s https://syncschedule.onrender.com/health/ > /dev/null
+        # -sf でエラーを失敗扱いにし、失敗した場合は10秒間隔で最大3回リトライする
+        run: curl -sf --retry 3 --retry-delay 10 --retry-all-errors https://syncschedule.onrender.com/health/ > /dev/null
